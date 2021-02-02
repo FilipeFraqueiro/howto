@@ -1,0 +1,58 @@
+in Linux OS
+
+install jdk
+sudo apt install openjdk8-jdk
+or
+sudo apt install openjdk14-jdk
+
+sudo apt install git
+sudo apt install cython
+sudo apt install autoconf
+sudo apt install libtool
+
+
+make a venv:
+pip install virtualenv
+
+virtualenv buildozer_venv
+
+activate venv:
+source /buildozer_venv/bin/activate
+
+pip install pyjnius
+
+pip install Cython
+
+buildozer init
+
+edit the buildozer.spec file
+
+to create apk:
+(buildozer will download ndk, and and sdk 
+if they are not in the system because you can download it and point 
+to the folders in the buildozer.spec file)
+(located in: ~/.buildozer/android/platform)
+
+the app main file must be named:
+main.py
+
+
+buildozer -v android debug
+
+connect the phone to computer and deploy:
+
+buildozer -v android deploy
+
+run the apk:
+
+buildozer -v android run
+
+or simple do all in one command:
+(logcat to see android execution)
+
+buildozer -v android debug deploy run logcat
+
+release version:
+buildozer -v android release
+
+

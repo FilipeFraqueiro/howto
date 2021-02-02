@@ -1,0 +1,300 @@
+---------------------downloads-----------------------------
+Download android tools
+extract the content of the downloaded file
+
+Download java 
+
+Linux:
+sudo apt install openjdk14-jdk
+
+
+---------------------setup-----------------------------
+Edit environment variables
+JAVA_HOME if you installed the JDK (Java Development Kit)
+JRE_HOME if you installed the JRE (Java Runtime Environment)
+
+JRE_HOME
+C:\Program Files\Java\jre1.8.0_271
+
+create folder:
+C:\Users\User\Android
+copy the android tools to this last folder
+
+create folder:
+C:\Users\User\Android\sdk
+
+########
+to avoid --sdk_root=C:\Users\User\Android\sdk:
+create folders:
+C:\Users\User\Android\sdk\cmdline-tools
+C:\Users\User\Android\sdk\cmdline-tools\latest
+copy the android tools to this last folder
+############
+
+open CMD prompt and go to:
+C:\Users\User\Android\cmdline-tools\bin
+
+or:
+C:\Users\User\Android\sdk\cmdline-tools\latest\bin
+
+
+linux environment variables:
+in file:
+/home/$USER/.bashrc
+export ANDROID_HOME=/home/$USER/sdk
+export ANDROID_SDK_ROOT=/home/$USER/sdk
+export ANDROID_AVD_HOME=/home/$USER/.android/avd
+
+
+---------------------sdkmanager-----------------------------
+run (if no errors its good to go):
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk
+
+run to list the cmds:
+sdkmanager.bat --help
+
+run to accept licences:
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --licenses
+
+to see all the packages (add-ons, build-tools, extras, ndk, patcher, platform-tools, platorms, sources, system-images):
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --list
+
+to see intalled packages:
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --list_installed
+
+to update:
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --update
+
+to install a package (the packages go to C:\Users\User\Android\sdk):
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --install package_name
+
+
+install platform-tools (that contains android debug bridge - adb):
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --install platform-tools
+(this goes to C:\Users\User\Android\sdk)
+
+
+install android emulator:
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --install emulator
+(this goes to C:\Users\User\Android\sdk)
+
+
+install build tools:
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --install build-tools;30.0.3
+(this goes to C:\Users\User\Android\sdk\platforms)
+
+
+install platform:
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --install platforms;android-30
+(this goes to C:\Users\User\Android\sdk\build-tools)
+
+
+install ndk
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --install ndk;22.0.7026061
+(this goes to C:\Users\User\Android\sdk\ndk)
+
+
+install system image
+sdkmanager.bat --sdk_root=C:\Users\User\Android\sdk --install system-images;android-29;google_apis;x86_64
+(this goes to C:\Users\User\Android\sdk\system-images)
+
+
+---------------------adb-----------------------------
+on your phone set the Developer Mode on
+go to Developer Options
+set USB debugging on
+connect your phone via USB
+
+go to:
+C:\Users\User\Android\sdk\platform-tools
+
+run to see commands:
+adb.exe help
+
+
+run to see attached devices:
+adb.exe devices
+
+to launch logcat
+adb.exe logcat
+
+to start a shell:
+adb.exe shell
+
+adb -d device_id
+
+
+---------------------avdmanager-----------------------------
+create folder to store the avds:
+C:\Users\User\Android\avds
+
+if no -p flag the avds are stored in:
+C:\Users\User\.android\avd
+
+
+run to list avd:
+avdmanager.bat list avd
+
+
+run to list devices:
+avdmanager.bat list device
+
+
+run to create a avd:
+avdmanager.bat create avd -n avd_name -p avd_location_path -k system_image_package
+
+run:
+avdmanager.bat create avd -n avd_1 -k system-images;android-29;google_apis;x86_64
+
+avdmanager.bat list avd
+Available Android Virtual Devices:
+    Name: avd_1
+    Path: C:\Users\User\.android\avd\avd_1.avd
+  Target: Google APIs (Google Inc.)
+          Based on: Android 10.0 (Q) Tag/ABI: google_apis/x86_64
+
+
+---------------------emulator-----------------------------
+start a device
+emulator.exe -avd avd_name
+emulator.exe -avd avd_1
+emulator: Android emulator version 30.3.5.0 (build_id 7033400) (CL:N/A)
+handleCpuAcceleration: feature check for hvf
+emulator: ERROR: x86_64 emulation currently requires hardware acceleration!
+CPU acceleration status: HAXM is not installed on this machine
+More info on configuring VM acceleration on Windows:
+https://developer.android.com/studio/run/emulator-acceleration#vm-windows
+General information on acceleration: https://developer.android.com/studio/run/emulator-acceleration.
+
+
+to install HAXM:
+sdkmanager.bat --install extras;intel;Hardware_Accelerated_Execution_Manager
+(this goes to C:\Users\User\Android\sdk\extras)
+
+go to:
+C:\Users\User\Android\sdk\extras\intel\Hardware_Accelerated_Execution_Manager
+
+run:
+intelhaxm-android.exe
+
+check:
+emulator-check.exe accel
+HAXM version 7.5.6 (4) is installed and usable.
+
+
+
+--------------------------------------apkanalyzer------------------------------------------
+go to:
+C:\Users\User\Android\sdk\cmdline-tools\latest\bin
+
+apkanalyzer.bat
+apkanalyzer.bat apk summary apk_name.apk
+apkanalyzer.bat --human-readable apk file-size apk_name.apk
+apkanalyzer.bat --human-readable apk download-size apk_name.apk
+apkanalyzer.bat apk features apk_name.apk
+
+apkanalyzer.bat --human-readable apk download-size C:\Users\User\Desktop\name_apk\engineerbricks_unsigned.apk
+
+
+--------------------------------------sign apk------------------------------------------
+go to:
+C:\"Program Files"\Java\jdk-15.0.1\bin\
+
+generate jks:
+keytool -genkey -keyalg RSA -alias mykeystore -keystore mykeystore.jks -storepass 12345678 -validity 360
+
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore apk.jks apk_unsigned.apk alias -storepass password
+
+
+jarsigner.exe -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore C:\Users\User\Desktop\name_apk\engineering_bricks_jks.jks C:\Users\User\Desktop\name_apk\engineerbricks-10.1-armeabi-v7a-release-unsigned.apk key0 -storepass creds_keystore
+
+Enter key password for key0: creds_key
+ updating: META-INF/MANIFEST.MF
+   adding: META-INF/KEY0.SF
+   adding: META-INF/KEY0.RSA
+  signing: AndroidManifest.xml
+  signing: assets/private.mp3
+  signing: classes.dex
+  signing: lib/armeabi-v7a/libSDL2.so
+  signing: lib/armeabi-v7a/libSDL2_image.so
+  signing: lib/armeabi-v7a/libSDL2_mixer.so
+  signing: lib/armeabi-v7a/libSDL2_ttf.so
+  signing: lib/armeabi-v7a/libcrypto1.1.so
+  signing: lib/armeabi-v7a/libUseri.so
+  signing: lib/armeabi-v7a/libhidapi.so
+  signing: lib/armeabi-v7a/libmain.so
+  signing: lib/armeabi-v7a/libpython3.8m.so
+  signing: lib/armeabi-v7a/libsqlite3.so
+  signing: lib/armeabi-v7a/libssl1.1.so
+  signing: res/drawable-hdpi-v4/ic_launcher.png
+  signing: res/drawable-mdpi-v4/ic_launcher.png
+  signing: res/drawable-xhdpi-v4/ic_launcher.png
+  signing: res/drawable-xxhdpi-v4/ic_launcher.png
+  signing: res/drawable/icon.png
+  signing: res/drawable/presplash.jpg
+  signing: res/layout/chooser_item.xml
+  signing: res/layout/main.xml
+  signing: res/layout/project_chooser.xml
+  signing: res/layout/project_empty.xml
+  signing: resources.arsc
+
+>>> Signer
+    X.509, CN=test_test
+    [trusted certificate]
+
+jar signed.
+
+Warning:
+The signer's certificate is self-signed.
+The SHA1 algorithm specified for the -digestalg option is considered a security risk. This algorithm will be disabled in a future update.
+The SHA1withRSA algorithm specified for the -sigalg option is considered a security risk. This algorithm will be disabled in a future update.
+
+
+
+go to:
+C:\Users\User\Android\sdk\build-tools\30.0.3\
+
+
+zipalign.exe -v 4 C:\Users\User\Desktop\name_apk\name-version-architecture-release-unsigned.apk C:\Users\User\Desktop\name_apk\name-version-architecture-release-signed.apk
+
+Verifying alignment of C:\Users\User\Desktop\name_apk\name_signed.apk (4)...
+      50 META-INF/MANIFEST.MF (OK - compressed)
+    1053 META-INF/KEY0.SF (OK - compressed)
+    2114 META-INF/KEY0.RSA (OK - compressed)
+    3223 AndroidManifest.xml (OK - compressed)
+    4384 assets/private.mp3 (OK)
+16059276 classes.dex (OK - compressed)
+16116943 lib/armeabi-v7a/libSDL2.so (OK - compressed)
+16499362 lib/armeabi-v7a/libSDL2_image.so (OK - compressed)
+16902565 lib/armeabi-v7a/libSDL2_mixer.so (OK - compressed)
+17042930 lib/armeabi-v7a/libSDL2_ttf.so (OK - compressed)
+17337016 lib/armeabi-v7a/libcrypto1.1.so (OK - compressed)
+18191967 lib/armeabi-v7a/libUseri.so (OK - compressed)
+18212663 lib/armeabi-v7a/libhidapi.so (OK - compressed)
+18228692 lib/armeabi-v7a/libmain.so (OK - compressed)
+18241281 lib/armeabi-v7a/libpython3.8m.so (OK - compressed)
+19343964 lib/armeabi-v7a/libsqlite3.so (OK - compressed)
+19728190 lib/armeabi-v7a/libssl1.1.so (OK - compressed)
+19931576 res/drawable-hdpi-v4/ic_launcher.png (OK)
+19934336 res/drawable-mdpi-v4/ic_launcher.png (OK)
+19936112 res/drawable-xhdpi-v4/ic_launcher.png (OK)
+19940064 res/drawable-xxhdpi-v4/ic_launcher.png (OK)
+19947000 res/drawable/icon.png (OK)
+20012728 res/drawable/presplash.jpg (OK)
+20079825 res/layout/chooser_item.xml (OK - compressed)
+20080361 res/layout/main.xml (OK - compressed)
+20080726 res/layout/project_chooser.xml (OK - compressed)
+20081153 res/layout/project_empty.xml (OK - compressed)
+20081496 resources.arsc (OK)
+Verification succesful
+
+
+
+
+apksigner.bat sign -v --v2-signing-enabled --ks C:\Users\User\Desktop\name_apk\name_jks.jks --in C:\Users\User\Desktop\name_apk\name-version-architecture-release-unsigned.apk --out C:\Users\User\Desktop\name_apk\name-version-architecture-release-signed.apk
+
+
+
+
+apksigner.bat verify C:\Users\User\Desktop\name_apk\name-version-architecture-release-signed.apk

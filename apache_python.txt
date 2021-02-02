@@ -1,0 +1,165 @@
+run with cgi:
+create a .py file in the server folder (/var/www/server_folder)
+
+on the server .conf file (etc/apache2/sites-available) add the lines:
+
+if you want every file to be treated as cgi:
+
+<Directory /var/www/server_folder>
+  Options ExecCGI
+  SetHandler cgi-script
+</Directory>
+
+
+or:
+<Directory /var/www/server_folder>
+    Options +ExecCGI
+    AddHandler cgi-script .cgi .py (etc)
+</Directory>
+
+
+create a .py file with the first line:
+#!/usr/bin/python
+
+and the desired code
+
+
+enable site:
+a2ensite site_name(as in .conf)
+
+restart apache:
+systemctl reload apache2
+
+
+go to the browser and go to:
+localhost/test_app.py
+
+instead of localhost you can use the ip adress
+
+
+
+
+run with wsgi:
+install mod-wsgi:
+
+sudo apt-get install libapache2-mod-wsgi-py3 python-dev
+
+
+enable mod wsgi:
+sudo a2enmod wsgi
+
+
+create a .py file in the server folder (/var/www/server_folder)
+
+create a .wsgi file:
+my_app.wsgi
+
+add to that file (for example):
+
+#!/usr/bin/python
+def application(environ, start_response):
+    status = '200 OK'
+    output = b'Hello World! 2 try'
+
+    response_headers = [('Content-type', 'text/plain'), ('Content-Length', str(len(output)))]
+    start_response(status, response_headers)
+
+    return [output]
+
+#
+from yourapplication import app as application
+#
+
+on the server .conf file (etc/apache2/sites-available) add the lines:
+
+
+WSGIScriptAlias /this_test /var/www/server_folder/my_app.wsgi
+
+<Directory /var/www/server_folder>
+    <IfVersion < 2.4>
+        Order allow,deny
+        Allow from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+        Require all granted
+    </IfVersion>
+</Directory>
+
+go to the browser and go to:
+localhost/this_test
+
+instead of localhost you can use the ip adress
+
+
+
+or with flask:
+create and add to .wsgi file:
+
+#!/usr/bin/python
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0,"/var/www/server_folder/")
+from test_app import app as application
+
+
+create a folder for the flask project:
+/var/www/server_folder/project_folder
+
+create a test_app.py file and add the flask code:
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello world!"
+
+if __name__ == "__main__":
+    app.run()
+
+
+for more compklex projects create two folders fdor the templates ans static files:
+/var/www/server_folder/project_folder/templates
+/var/www/server_folder/project_folder/statics
+
+
+on the server .conf file (etc/apache2/sites-available) add the lines:
+
+
+WSGIScriptAlias /this_test /var/www/server_folder/my_app.wsgi
+
+
+WSGIDaemonProcess FlaskApp python-path=/var/www/server_folder:/var/www/server_folder/project_folder/venv/lib/python3.6/site-packages
+
+WSGIProcessGroup FlaskApp
+
+<Directory /var/www/server_folder>
+    # set permissions as per apache2.conf file
+    Options FollowSymLinks
+    Allow from all
+    AllowOverride None
+    Require all granted
+</Directory>
+
+
+go to the browser and go to:
+localhost/this_test
+
+instead of localhost you can use the ip adress
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
